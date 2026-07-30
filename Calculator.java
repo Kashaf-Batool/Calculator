@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -19,22 +20,26 @@ public class Calculator extends JFrame implements ActionListener{
     double result = 0;
     String operator = "";
     JTextField display; 
+    JTextField history;
     Calculator(){
         ImageIcon image = new ImageIcon("image.png");
         setIconImage(image.getImage());
        //JFrame
-        JPanel panel = new JPanel(new GridLayout(5, 4, 5, 5));
+       
         setTitle("Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(Color.BLACK);
         setSize(300,500);
         setResizable(false);
-        setBackground(Color.BLACK);
+        setLayout(null);
+        setLocationRelativeTo(null);
+        
        
-
+ JPanel panel = new JPanel(new GridLayout(5, 4, 5, 5));
+ panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 //Buttons
         String[] labels = {
-            "√" ,"x²","x³" ,"⌫",
+            "√" ,"x²","x³" ,"x",
             "7", "8", "9", "/",
             "4", "5", "6", "*",
             "1", "2", "3", "-",
@@ -45,13 +50,29 @@ public class Calculator extends JFrame implements ActionListener{
             
         }
         setLayout(new BorderLayout());
-
-         display = new JTextField();
-        display.setPreferredSize(new Dimension(0, 160));
+//Top Panel//
+        display = new JTextField();
         display.setFont(new Font("Arial",Font.BOLD,35));
         display.setHorizontalAlignment(JTextField.RIGHT);
+        //display.setBorder(BorderFactory.createLineBorder(Color.green,1));
+        display.setBorder(null);
 
-        add(display, BorderLayout.NORTH);
+        history = new JTextField();
+        history.setEditable(false);
+        history.getCaret().setVisible(false);
+        history.setFont(new Font("Arial",Font.PLAIN,15));
+        history.setHorizontalAlignment(JTextField.RIGHT);
+        history.setForeground(Color.gray);
+        history.setBorder(null);
+        history.setBackground(Color.white);
+   
+        JPanel topPanel = new JPanel(new GridLayout(2,1));
+           topPanel.setPreferredSize(new Dimension(0, 150));
+        topPanel.add(history);
+        topPanel.add(display);
+        
+
+        add(topPanel, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
          setVisible(true);
         
@@ -60,10 +81,14 @@ public class Calculator extends JFrame implements ActionListener{
         public JButton createButton(String text){
            JButton btn = new JButton(text);
             btn.setFont(new Font("Arial", Font.BOLD, 30));
-            btn.setBackground(Color.black);
+          btn.setBackground(new Color(245,245,245));
+                btn.setForeground(Color.BLACK);
             btn.setBorder(BorderFactory.createLineBorder(Color.orange));
-            btn.setForeground(Color.orange);
             btn.setFocusable(false);
+            if(text.equals("=")){
+                    btn.setBackground(new Color(255,170,40));
+                    btn.setForeground(Color.WHITE);
+}
            
             btn.addActionListener(e -> buttonClicked(text));
             return btn;
@@ -85,6 +110,7 @@ public class Calculator extends JFrame implements ActionListener{
         } else {
             num1 = applyOperator(operator, num1, Double.parseDouble(display.getText()));
         }
+        history.setText(num1 + " " + value);
         operator = value;
         display.setText("");
     }
@@ -98,17 +124,21 @@ public class Calculator extends JFrame implements ActionListener{
                 operator = "";
                 return;
             }
+            history.setText(value + "(" + num1 + ")");
             result = applyAdvOperator(operator, num1);
        } else{
         num2 = Double.parseDouble(display.getText());
+         history.setText(num1 + " " + operator + " " + num2 + " =");
         result = applyOperator(operator, num1, num2);
        }
+    
      display.setText(String.valueOf(result));
      num1 = result;
      operator = "";
     }
     else if(value.equals("C")){
         display.setText("");
+          history.setText("");
         num1 = 0;
         num2 = 0;
         operator = "";
@@ -148,7 +178,7 @@ private double applyAdvOperator(String op, double a){
            case "x²": AdvResult= a * a; break;
             case "x³": AdvResult = a * a * a; break;
             case "√":
-                AdvResult = Math.sqrt(a);
+                AdvResult = Math.round(Math.sqrt(a) * 1_000_000.0) / 1_000_000.0;
                 break;
     }
     return AdvResult;
