@@ -21,15 +21,6 @@ public class Calculator extends JFrame implements ActionListener{
     String operator = "";
     JTextField display; 
     JTextField history;
-    // --- Added: extra color palette (new fields, nothing existing touched) ---
-    private static final Color APP_BG = new Color(18, 18, 20);
-    private static final Color PANEL_BG = new Color(24, 24, 27);
-    private static final Color DISPLAY_BG = new Color(28, 28, 32);
-    private static final Color ACCENT = new Color(255, 170, 40);
-    private static final Color ACCENT_HOVER = new Color(255, 190, 90);
-    private static final Color BTN_BG = new Color(40, 40, 44);
-    private static final Color BTN_BG_HOVER = new Color(55, 55, 60);
-    private static final Color OP_BTN_BG = new Color(50, 45, 40);
     Calculator(){
         ImageIcon image = new ImageIcon("image.png");
         setIconImage(image.getImage());
@@ -37,22 +28,17 @@ public class Calculator extends JFrame implements ActionListener{
        
         setTitle("Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setBackground(Color.BLACK);
-        // Added: softer overall background layered on top of the black base
-        getContentPane().setBackground(APP_BG);
-        setSize(300,500);
+        getContentPane().setBackground(new Color(30, 30, 30));
+        setSize(330,500);
         setResizable(false);
         setLayout(null);
         setLocationRelativeTo(null);
         
-       
- JPanel panel = new JPanel(new GridLayout(5, 4, 5, 5));
- //panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
- // Added: give the button grid some breathing room and a matching dark background
- panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
- panel.setBackground(PANEL_BG);
- panel.setOpaque(true);
-//Buttons
+       //PANEL//
+        JPanel panel = new JPanel(new GridLayout(5,4,8,8));
+        panel.setBackground(new Color(30,30,30));
+        panel.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
+        //Buttons
         String[] labels = {
             "√" ,"x²","x³" ,"x",
             "7", "8", "9", "/",
@@ -65,81 +51,84 @@ public class Calculator extends JFrame implements ActionListener{
             
         }
         setLayout(new BorderLayout());
-//Top Panel//
+        //Top Panel//
         display = new JTextField();
-        display.setFont(new Font("Arial",Font.BOLD,35));
-        display.setHorizontalAlignment(JTextField.RIGHT);
-        //display.setBorder(BorderFactory.createLineBorder(Color.green,1));
-        display.setBorder(null);
-        // Added: nicer display styling layered on top of the defaults above
-        display.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20));
-        display.setBackground(DISPLAY_BG);
+        display.setFont(new Font("Segoe UI", Font.BOLD, 38));
+        display.setBackground(new Color(35, 35, 35));
         display.setForeground(Color.WHITE);
+        display.setHorizontalAlignment(JTextField.RIGHT);
         display.setCaretColor(Color.WHITE);
-        display.setFont(new Font("Consolas", Font.BOLD, 38));
+        //display.setBorder(BorderFactory.createEmptyBorder(10,15,10,15));
+        display.setBorder(
+        BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(new Color(70,70,70),1),
+        BorderFactory.createEmptyBorder(10,15,10,15)
+          ));
 
         history = new JTextField();
         history.setEditable(false);
         history.getCaret().setVisible(false);
-        history.setFont(new Font("Arial",Font.PLAIN,15));
         history.setHorizontalAlignment(JTextField.RIGHT);
-        history.setForeground(Color.gray);
-        history.setBorder(null);
-        history.setBackground(Color.white);
-        // Added: match history strip to the new dark palette
-        history.setBorder(BorderFactory.createEmptyBorder(8, 10, 0, 20));
-        history.setBackground(DISPLAY_BG);
-        history.setForeground(new Color(150, 150, 155));
-        history.setFont(new Font("Consolas", Font.PLAIN, 16));
+        history.setFont(new Font("Segoe UI", Font.PLAIN, 17));
+        history.setForeground(new Color(170,170,170));
+        history.setBackground(new Color(35,35,35));
+        history.setBorder(BorderFactory.createEmptyBorder(10,15,0,15));
    
         JPanel topPanel = new JPanel(new GridLayout(2,1));
-           topPanel.setPreferredSize(new Dimension(0, 150));
+       // JPanel topPanel = new JPanel(new GridLayout(2,1));
+        topPanel.setBackground(new Color(35,35,35));
+        topPanel.setPreferredSize(new Dimension(0, 150));
         topPanel.add(history);
         topPanel.add(display);
-        // Added: frame the display area to match the dark theme
-        topPanel.setBackground(DISPLAY_BG);
-        topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, ACCENT));
-        
-
         add(topPanel, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
-         setVisible(true);
+        setVisible(true);
         
-    }
-    
-        public JButton createButton(String text){
-           JButton btn = new JButton(text);
-            btn.setFont(new Font("Arial", Font.BOLD, 30));
-          btn.setBackground(new Color(245,245,245));
-                btn.setForeground(Color.BLACK);
-            btn.setBorder(BorderFactory.createLineBorder(Color.orange));
-            btn.setFocusable(false);
-            if(text.equals("=")){
-                    btn.setBackground(new Color(255,170,40));
-                    btn.setForeground(Color.WHITE);
-}
-           
-            btn.addActionListener(e -> buttonClicked(text));
-            // Added: rounded, padded border + dark palette + hover glow, layered after original setup
-            boolean isEquals = text.equals("=");
-            boolean isOperator = "/*-+".contains(text) && text.length() == 1;
-            Color baseBg = isEquals ? ACCENT : (isOperator ? OP_BTN_BG : BTN_BG);
-            btn.setBackground(baseBg);
-            btn.setForeground(Color.WHITE);
-            btn.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(isEquals ? ACCENT : new Color(70, 70, 75), 1, true),
-                BorderFactory.createEmptyBorder(8, 8, 8, 8)
-            ));
-            btn.addMouseListener(new java.awt.event.MouseAdapter(){
-                public void mouseEntered(java.awt.event.MouseEvent evt){
-                    btn.setBackground(isEquals ? ACCENT_HOVER : BTN_BG_HOVER);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt){
-                    btn.setBackground(baseBg);
-                }
-            });
-            return btn;
         }
+    
+  public JButton createButton(String text){
+    JButton btn = new JButton(text);
+    btn.setFont(new Font("Segoe UI", Font.BOLD,26));
+    btn.setFocusable(false);
+    btn.setMargin(new Insets(0,0,0,0));
+    btn.setBorder(BorderFactory.createEmptyBorder());
+
+    // Number Buttons
+    btn.setBackground(new Color(58,58,58));
+    btn.setForeground(Color.WHITE);
+
+    // Operator Buttons
+    if(text.equals("+") || text.equals("-")
+            || text.equals("*") || text.equals("/")){
+
+        btn.setBackground(new Color(255,149,0));
+        btn.setForeground(Color.WHITE);
+    }
+
+    // Equal Button
+    if(text.equals("=")){
+        btn.setBackground(new Color(0,170,255));
+        btn.setForeground(Color.WHITE);
+    }
+
+    // Clear Button
+    if(text.equals("C")){
+        btn.setBackground(new Color(230,70,70));
+        btn.setForeground(Color.WHITE);
+    }
+
+    // Advanced Operations
+    if(text.equals("√") || text.equals("x²")
+            || text.equals("x³") || text.equals("x")){
+
+        btn.setBackground(new Color(90,90,90));
+        btn.setForeground(Color.WHITE);
+    }
+
+    btn.addActionListener(e -> buttonClicked(text));
+
+    return btn;
+}
      @Override
     public void actionPerformed(ActionEvent e){
 
@@ -163,22 +152,22 @@ public class Calculator extends JFrame implements ActionListener{
     }
 
     else if(value.equals("=")){
-       if(operator.isEmpty()) return;
-       //Checks for Uniary Operator
-       if(isUnary(operator)){
-            if(operator.equals("√") && num1<0){
-                display.setText("Error!");
-                operator = "";
-                return;
-            }
-            history.setText(value + "(" + num1 + ")");
-            result = applyAdvOperator(operator, num1);
-       } else{
-        num2 = Double.parseDouble(display.getText());
-         history.setText(num1 + " " + operator + " " + num2 + " =");
-        result = applyOperator(operator, num1, num2);
-       }
-    
+        if(operator.isEmpty()) return;
+        //Checks for Uniary Operator
+        if(isUnary(operator)){
+                if(operator.equals("√") && num1<0){
+                    display.setText("Error!");
+                    operator = "";
+                    return;
+                }
+                history.setText(value + "(" + num1 + ")");
+                result = applyAdvOperator(operator, num1);
+        } else{
+            num2 = Double.parseDouble(display.getText());
+            history.setText(num1 + " " + operator + " " + num2 + " =");
+            result = applyOperator(operator, num1, num2);
+        }
+        
      display.setText(String.valueOf(result));
      num1 = result;
      operator = "";
